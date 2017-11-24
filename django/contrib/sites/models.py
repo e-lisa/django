@@ -52,8 +52,12 @@ class SiteManager(models.Manager):
         Return the current Site based on the SITE_ID in the project's settings.
         If SITE_ID isn't defined, return the site with domain matching
         request.get_host(). The ``Site`` object is cached the first time it's
-        retrieved from the database.
+        retrieved from the database. If the Site object has been added to the
+        request by optional middleware return requset.site instead
         """
+        if hasattr(request, 'site'):
+            return request.site
+
         from django.conf import settings
         if getattr(settings, 'SITE_ID', ''):
             site_id = settings.SITE_ID
